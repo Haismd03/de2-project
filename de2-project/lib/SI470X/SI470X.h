@@ -11,9 +11,10 @@
 
 #ifndef RADIO_H
 #define RADIO_H
+#endif
+
 #include <stdbool.h>
 #include <stdint.h>
-#endif
 
 #define MAX_DELAY_AFTER_OSCILLATOR 500 // Max delay after the crystal oscilator becomes active
 
@@ -340,28 +341,28 @@ typedef union
  * @brief RDS Block A
  *
  */
-typedef uint16_t si470x_reg0c; //!< RDS Block A Data.
+typedef uint16_t si470x_reg0c_t; //!< RDS Block A Data.
 
 /**
  * @ingroup GA01
  * @brief RDS Block B
  *
  */
-typedef uint16_t si470x_reg0d; //!< RDS Block B Data.
+typedef uint16_t si470x_reg0d_t; //!< RDS Block B Data.
 
 /**
  * @ingroup GA01
  * @brief RDS Block C
  *
  */
-typedef uint16_t si470x_reg0e; //!< RDS Block C Data.
+typedef uint16_t si470x_reg0e_t; //!< RDS Block C Data.
 
 /**
  * @ingroup GA01
  * @brief RDS Block D
  *
  */
-typedef uint16_t si470x_reg0f; //!< RDS Block D Data.
+typedef uint16_t si470x_reg0f_t; //!< RDS Block D Data.
 
 /**
  * @ingroup GA01
@@ -410,7 +411,7 @@ typedef union si470x_rds_blockb_u
         uint16_t versionCode : 1;        // (B0) => 0=A; 1=B
         uint16_t groupType : 4;          // Group Type code.
     } refined;
-    si470x_reg0d blockB;
+    si470x_reg0d_t blockB;
 } si470x_rds_blockb_t;
 
 /**
@@ -468,10 +469,10 @@ typedef struct
     si470x_reg09_t *reg09;
     si470x_reg0a_t *reg0a;
     si470x_reg0b_t *reg0b;
-    si470x_reg0c *reg0c;
-    si470x_reg0d *reg0d;
-    si470x_reg0e *reg0e;
-    si470x_reg0f *reg0f;
+    si470x_reg0c_t *reg0c;
+    si470x_reg0d_t *reg0d;
+    si470x_reg0e_t *reg0e;
+    si470x_reg0f_t *reg0f;
 
     uint16_t startBand[4];
     uint16_t endBand[4];

@@ -6,6 +6,7 @@
 #include <util/delay.h>
 
 void si470x_init(SI470X_t *radio)
+
 {
     // Inicializuj ukazatele na shadow registry
     radio->reg00 = (si470x_reg00_t *)&radio->shadowRegisters[0];
@@ -20,10 +21,10 @@ void si470x_init(SI470X_t *radio)
     radio->reg09 = (si470x_reg09_t *)&radio->shadowRegisters[9];
     radio->reg0a = (si470x_reg0a_t *)&radio->shadowRegisters[10];
     radio->reg0b = (si470x_reg0b_t *)&radio->shadowRegisters[11];
-    radio->reg0c = (si470x_reg0c *)&radio->shadowRegisters[12];
-    radio->reg0d = (si470x_reg0d *)&radio->shadowRegisters[13];
-    radio->reg0e = (si470x_reg0e *)&radio->shadowRegisters[14];
-    radio->reg0f = (si470x_reg0f *)&radio->shadowRegisters[15];
+    radio->reg0c = (si470x_reg0c_t *)&radio->shadowRegisters[12];
+    radio->reg0d = (si470x_reg0d_t *)&radio->shadowRegisters[13];
+    radio->reg0e = (si470x_reg0e_t *)&radio->shadowRegisters[14];
+    radio->reg0f = (si470x_reg0f_t *)&radio->shadowRegisters[15];
 
     // Inicializace polí (odpovídá C++ konstruktoru)
     uint16_t startBand_default[4] = {8750, 7600, 7600, 6400};
@@ -49,29 +50,6 @@ void si470x_init(SI470X_t *radio)
     for (uint8_t i = 0; i < 16; ++i) {radio->shadowRegisters[i] = 0;}
 }
 
-// void si470x_set_i2c_address(SI470X_t *radio, int addr)
-// {
-//     radio->deviceAddress = addr;
-// }
-
-// void si470x_set_delay_after_crystal_on(SI470X_t *radio, uint8_t ms)
-// {
-//     radio->maxDelayAfterCrystalOn = ms;
-// }
-
-// uint16_t si470x_get_shadow_register(SI470X_t *radio, uint8_t reg)
-// {
-//     if (reg < 17)
-//         return radio->shadowRegisters[reg];
-//     return 0;
-// }
-
-// void si470x_set_shadow_register(SI470X_t *radio, uint8_t reg, uint16_t value)
-// {
-//     if (reg < 17)
-//         radio->shadowRegisters[reg] = value;
-// }
-
 void si470x_set_all_registers(SI470X_t *radio, uint8_t limit)
 {
     word16_to_bytes_t aux;
@@ -95,6 +73,7 @@ void si470x_get_all_registers(SI470X_t *radio)
 
     twi_start();
     twi_write((radio->deviceAddress << 1) | TWI_WRITE);
+    twi_write(0x0A);
     twi_stop();
 
     _delay_us(1);
@@ -112,56 +91,49 @@ void si470x_get_all_registers(SI470X_t *radio)
     twi_stop();
 }
 
-// void si470x_reset(SI470X_t *radio)
-// {
-//     twi_init();
-// 
-//     gpio_mode_output(radio->resetPort, radio->resetPin);
-// 
-//     gpio_write_low(radio->resetPort, radio->resetPin);
-//     _delay_ms(1);
-// 
-//     gpio_write_high(radio->resetPort, radio->resetPin);
-//     _delay_ms(110);
-// }
+static void si470x_wait_for_stc(SI470X_t *radio, bool shouldBeSet)
+{
+    // Pokud shouldBeSet==true, čekáme STC==1, jinak čekáme STC==0
+    const uint16_t STC_MASK = (1 << 14);
+    // timeout (bez blokování navždy) - v iteracích; uprav podle potřeby
+    uint16_t timeout = 1000;
 
-// void si470x_powerUp(SI470X_t *radio)
-// {
-//     si470x_reset(radio);
-//     twi_init();
-// 
-//     radio->shadowRegisters[0x02] = 0x4001; // Enable, Disable Mute, Crystal
-//     radio->shadowRegisters[0x03] = 0x0000; // Nastavení kanálu
-//     radio->shadowRegisters[0x04] = 0x0000; // Nastavení de-emfáze
-//     radio->shadowRegisters[0x05] = 0x0000; // Volume, Seek Threshold
-//     radio->shadowRegisters[0x07] = 0x0000; // RDS off zatím
-// 
-//     si470x_set_all_registers(radio, 0x07);
-// 
-//     _delay_ms(MAX_DELAY_AFTER_OSCILLATOR);
-// 
-//     radio->shadowRegisters[0x04] |= (1 << 12); // RDS bit
-//     si470x_set_all_registers(radio, 0x07);
-// }
 
-// void si470x_powerDown(SI470X_t *radio)
-// {
-//     radio->shadowRegisters[0x02] &= ~(1 << 0); // Vypne ENABLE bit
-//     si470x_set_all_registers(radio, 0x07);
-// }
+    while (timeout--)
+    {
+        si470x_get_all_registers(radio);
+        uint16_t status = radio->shadowRegisters[0x0A]; // STATUSRSSI
+        if (shouldBeSet)
+        {
+            if (status & STC_MASK) return; // STC == 1 -> hotovo
+        }
+        else
+        {
+            if (!(status & STC_MASK)) return; // STC == 0 -> hotovo
+        }
+        _delay_ms(5);
+    }
+// Pokud dosáhneme sem, timeout - stále pokračujeme, ale není záruka, že STC dosáhl požadovaného stavu
+}
 
 void si470x_setChannel(SI470X_t *radio, uint16_t channel)
 {
     radio->shadowRegisters[0x03] &= 0xFE00; // Vymaž starý kanál
-    radio->shadowRegisters[0x03] |= channel; // Nastav nový kanál
+    radio->shadowRegisters[0x03] |= (channel & 0x03ff); // Nastav nový kanál
     radio->shadowRegisters[0x03] |= (1 << 15); // TUNE = 1
 
     si470x_set_all_registers(radio, 0x03);
 
-    _delay_ms(60);
+    // Čekej na STC = 1
+    si470x_wait_for_stc(radio, true);
 
-    radio->shadowRegisters[0x03] &= ~(1 << 15);
+    radio->shadowRegisters[0x03] &= ~(1 << 15);    
     si470x_set_all_registers(radio, 0x03);
+
+    si470x_wait_for_stc(radio, false);
+
+    // Aktualizace shadow registrů - načti status
+    si470x_get_all_registers(radio);
 }
 
 void si470x_setFrequency(SI470X_t *radio, uint16_t frequency)
@@ -179,19 +151,9 @@ void si470x_setFrequency(SI470X_t *radio, uint16_t frequency)
 void si470x_setMute(SI470X_t *radio, bool value)
 {
     if (value)
-        radio->shadowRegisters[0x02] &= ~(1 << 14); // DMUTE = 0
+        radio->shadowRegisters[0x02] &= ~(1 << 14); // DMUTE = 0 -> mute
     else
-        radio->shadowRegisters[0x02] |= (1 << 14);  // DMUTE = 1
-
-    si470x_set_all_registers(radio, 0x07);
-}
-
-void si470x_setMono(SI470X_t *radio, bool value)
-{
-    if (value)
-        radio->shadowRegisters[0x02] |= (1 << 13); // MONO = 1
-    else
-        radio->shadowRegisters[0x02] &= ~(1 << 13); // MONO = 0
+        radio->shadowRegisters[0x02] |= (1 << 14);  // DMUTE = 1 -> unmute
 
     si470x_set_all_registers(radio, 0x07);
 }
@@ -242,6 +204,8 @@ void si470x_setup(SI470X_t *radio, volatile uint8_t *reset_port, uint8_t reset_p
     for (uint8_t i = 0; i < 16; i++)
         radio->shadowRegisters[i] = 0;
 
+    radio->shadowRegisters[0x02] = (1 << 0);
+
     // Konfigurace napájení a oscilátoru
     radio->shadowRegisters[0x02] = (1 << 0); // ENABLE
     radio->shadowRegisters[0x03] = 0x0000;
@@ -267,3 +231,85 @@ void si470x_setup(SI470X_t *radio, volatile uint8_t *reset_port, uint8_t reset_p
     radio->currentFMBand = 0;
     radio->currentFMSpace = 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+// void si470x_set_i2c_address(SI470X_t *radio, int addr)
+// {
+//     radio->deviceAddress = addr;
+// }
+
+// void si470x_set_delay_after_crystal_on(SI470X_t *radio, uint8_t ms)
+// {
+//     radio->maxDelayAfterCrystalOn = ms;
+// }
+
+// uint16_t si470x_get_shadow_register(SI470X_t *radio, uint8_t reg)
+// {
+//     if (reg < 17)
+//         return radio->shadowRegisters[reg];
+//     return 0;
+// }
+
+// void si470x_set_shadow_register(SI470X_t *radio, uint8_t reg, uint16_t value)
+// {
+//     if (reg < 17)
+//         radio->shadowRegisters[reg] = value;
+// }
+
+// void si470x_reset(SI470X_t *radio)
+// {
+//     twi_init();
+// 
+//     gpio_mode_output(radio->resetPort, radio->resetPin);
+// 
+//     gpio_write_low(radio->resetPort, radio->resetPin);
+//     _delay_ms(1);
+// 
+//     gpio_write_high(radio->resetPort, radio->resetPin);
+//     _delay_ms(110);
+// }
+
+// void si470x_powerUp(SI470X_t *radio)
+// {
+//     si470x_reset(radio);
+//     twi_init();
+// 
+//     radio->shadowRegisters[0x02] = 0x4001; // Enable, Disable Mute, Crystal
+//     radio->shadowRegisters[0x03] = 0x0000; // Nastavení kanálu
+//     radio->shadowRegisters[0x04] = 0x0000; // Nastavení de-emfáze
+//     radio->shadowRegisters[0x05] = 0x0000; // Volume, Seek Threshold
+//     radio->shadowRegisters[0x07] = 0x0000; // RDS off zatím
+// 
+//     si470x_set_all_registers(radio, 0x07);
+// 
+//     _delay_ms(MAX_DELAY_AFTER_OSCILLATOR);
+// 
+//     radio->shadowRegisters[0x04] |= (1 << 12); // RDS bit
+//     si470x_set_all_registers(radio, 0x07);
+// }
+
+// void si470x_powerDown(SI470X_t *radio)
+// {
+//     radio->shadowRegisters[0x02] &= ~(1 << 0); // Vypne ENABLE bit
+//     si470x_set_all_registers(radio, 0x07);
+// }
+
+// void si470x_setMono(SI470X_t *radio, bool value)
+// {
+//     if (value)
+//         radio->shadowRegisters[0x02] |= (1 << 13); // MONO = 1
+//     else
+//         radio->shadowRegisters[0x02] &= ~(1 << 13); // MONO = 0
+// 
+//     si470x_set_all_registers(radio, 0x07);
+// }
