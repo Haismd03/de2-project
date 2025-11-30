@@ -1,158 +1,94 @@
-/*
- * I2C/TWI library for AVR-GCC.
- * (c) 2018-2025 Tomas Fryza, MIT license
+﻿/*
+ * TWI.c
  *
- * Developed using PlatformIO and Atmel AVR platform.
- * Tested on Arduino Uno board and ATmega328P, 16 MHz.
- */
+ * Created: 2018-04-11 오전 8:08:44
+ *  Author: kiki
+ */ 
 
-// -- Includes ---------------------------------------------
-#include <twi.h>
+#include "TWI.h"
+#include "uart.h"
+#ifndef cbi
+#define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
+#endif
 
-
-// -- Functions --------------------------------------------
-/*
- * Function: twi_init()
- * Purpose:  Initialize TWI unit, enable internal pull-ups, and set SCL
- *           frequency.
- * Returns:  none
- */
-void twi_init(void)
+void TWI_Init(void)
 {
-    /* Enable internal pull-up resistors */
-    DDR(TWI_PORT) &= ~((1<<TWI_SDA_PIN) | (1<<TWI_SCL_PIN));
-    TWI_PORT |= (1<<TWI_SDA_PIN) | (1<<TWI_SCL_PIN);
+	//uart_print("Initializing TWI...\n");
+    // Ενεργοποίηση των pull-up αντιστάσεων
+    DDRC &= ~((1 << PC4) | (1 << PC5));  // Ρύθμιση PC4 και PC5 ως είσοδοι
+    
+	
+	PORTC |= (1 << PC4) | (1 << PC5);    // Ενεργοποίηση των pull-up αντιστάσεων
 
-    /* Set SCL frequency */
-    TWSR &= ~((1<<TWPS1) | (1<<TWPS0));
-    TWBR = TWI_BIT_RATE_REG;
+    // Ρύθμιση του TWI (I2C)
+	// initialize twi prescaler and bit rate
+	cbi(TWSR, TWPS0);
+	cbi(TWSR, TWPS1);
+    TWBR = ((F_CPU/TWI_FREQ)-16)/2; // Υπολογισμός του Bit Rate Register
+    
+	
+	TWSR = (0 << TWPS1) | (0 << TWPS0);  // Ρύθμιση του Prescaler
+    TWCR = (1 << TWEN);                   // Ενεργοποίηση του TWI	
 }
 
-
-/*
- * Function: twi_start()
- * Purpose:  Start communication on I2C/TWI bus.
- * Returns:  none
- */
-void twi_start(void)
+bool TWI_Start(uint8_t address, uint8_t read_write)
 {
-    /* Send Start condition */
-    TWCR = (1<<TWINT) | (1<<TWSTA) | (1<<TWEN);
-    while ((TWCR & (1<<TWINT)) == 0);
+    TWCR = (1 << TWSTA) | (1 << TWINT) | (1 << TWEN); // Send start condition
+    while (!(TWCR & (1 << TWINT))); // Wait for start condition to be transmitted
+    
+    TWDR = (address << 1) | read_write; // Load address and R/W bit
+    TWCR = (1 << TWINT) | (1 << TWEN); // Start transmission
+    while (!(TWCR & (1 << TWINT))); // Wait for completion
+    
+    return (TWSR & TWI_TWS_MASK) == TWI_MT_SLA_ACK || (TWSR & TWI_TWS_MASK) == TWI_MR_SLA_ACK;
 }
 
-
-/*
- * Function: twi_write()
- * Purpose:  Write one byte to the I2C/TWI bus.
- * Input:    data Byte to be transmitted
- * Returns:  ACK/NACK received value
- */
-uint8_t twi_write(uint8_t data)
+void TWI_Stop(void)
 {
-    uint8_t twi_status;
-
-    /* Send SLA+R, SLA+W, or data byte on I2C/TWI bus */
-    TWDR = data;
-    TWCR = (1<<TWINT) | (1<<TWEN);
-    while ((TWCR & (1<<TWINT)) == 0);
-
-    /* Check value of TWI status register */
-    twi_status = TWSR & 0xf8;
-
-    /* Status Code:
-         - 0x18: SLA+W has been transmitted and ACK received
-         - 0x28: Data byte has been transmitted and ACK has been received
-         - 0x40: SLA+R has been transmitted and ACK received
-    */
-    if (twi_status == 0x18 || twi_status == 0x28 || twi_status == 0x40)
-        return 0;   /* ACK received */
-    else
-        return 1;   /* NACK received */
+    TWCR = (1 << TWSTO) | (1 << TWINT) | (1 << TWEN); // Send stop condition
+    while (TWCR & (1 << TWSTO)); // Wait for stop condition to be executed
 }
 
-
-/*
- * Function: twi_read()
- * Purpose:  Read one byte from the I2C/TWI bus and acknowledge
- *           it by ACK or NACK.
- * Input:    ack ACK/NACK value to be transmitted
- * Returns:  Received data byte
- */
-uint8_t twi_read(uint8_t ack)
+bool TWI_Write(uint8_t data)
 {
-    if (ack == TWI_ACK)
-        TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWEA);
-    else
-        TWCR = (1<<TWINT) | (1<<TWEN);
-    while ((TWCR & (1<<TWINT)) == 0);
-
-    return (TWDR);
+    TWDR = data; // Load data into data register
+    TWCR = (1 << TWINT) | (1 << TWEN); // Start transmission
+    while (!(TWCR & (1 << TWINT))); // Wait for transmission to complete
+    
+    return (TWSR & TWI_TWS_MASK) == TWI_MT_DATA_ACK;
 }
 
-
-/*
- * Function: twi_stop()
- * Purpose:  Generates Stop condition on I2C/TWI bus.
- * Returns:  none
- */
-void twi_stop(void)
+uint8_t TWI_Read(bool ack)
 {
-    TWCR = (1<<TWINT) | (1<<TWSTO) | (1<<TWEN);
+    TWCR = (1 << TWINT) | (1 << TWEN) | (ack ? (1 << TWEA) : 0); // Start reception and send ACK/NACK
+    while (!(TWCR & (1 << TWINT))); // Wait for reception to complete
+    
+    return TWDR; // Return received data
 }
 
-
-/*
- * Function: twi_test_address()
- * Purpose:  Test presence of one I2C device on the bus.
- * Input:    addr Slave address
- * Returns:  ACK/NACK received value
- */
-uint8_t twi_test_address(uint8_t addr)
+bool TWI_RxBuffer(uint8_t address, uint8_t *data, uint8_t length)
 {
-    uint8_t ack;  // ACK response from Slave
-
-    twi_start();
-    ack = twi_write((addr<<1) | TWI_WRITE);
-    twi_stop();
-
-    return ack;
-}
-
-
-/*
- * Function: twi_readfrom_mem_into()
- * Purpose:  Read into buf from the peripheral starting from the memory address.
- * Input:    addr Slave address
- *           memaddr Starting address
- *           buf Buffer to be read into
- *           nbytes Number of bytes
- * Returns:  None
- */
-void twi_readfrom_mem_into(uint8_t addr, uint8_t memaddr, volatile uint8_t *buf, uint8_t nbytes)
-{
-    twi_start();
-    if (twi_write((addr<<1) | TWI_WRITE) == 0)
+    if (!TWI_Start(address, TWI_READ)) return false;
+    
+    for (uint8_t i = 0; i < length; i++)
     {
-        // Set starting address
-        twi_write(memaddr);
-        twi_stop();
+        data[i] = TWI_Read(i < (length - 1)); // Send ACK for all but last byte
+    }
+    
+    TWI_Stop();
+    return true;
+}
 
-        // Read data into the buffer
-        twi_start();
-        twi_write((addr<<1) | TWI_READ);
-        if (nbytes >= 2)
-        {
-            for (uint8_t i=0; i<(nbytes-1); i++)
-            {
-                *buf++ = twi_read(TWI_ACK);
-            }
-        }
-        *buf = twi_read(TWI_NACK);
-        twi_stop();
-    }
-    else
+bool TWI_TxBuffer(uint8_t address, const uint8_t *data, uint8_t length)
+{
+    if (!TWI_Start(address, TWI_WRITE)) return false;
+    
+    for (uint8_t i = 0; i < length; i++)
     {
-        twi_stop();
+        if (!TWI_Write(data[i])) return false;
     }
+    
+    TWI_Stop();
+	
+    return true;
 }
