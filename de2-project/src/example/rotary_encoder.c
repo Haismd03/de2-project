@@ -25,8 +25,8 @@ int main(void) {
     uint16_t enc1_position = 0;
     uint16_t enc2_position = 0;
 
-    enc_settings_t settings_1 = {15, 0, &enc1_position};
-    enc_settings_t settings_2 = {20, 0, &enc2_position};
+    enc_settings_t settings_1 = {0, 15, &enc1_position};
+    enc_settings_t settings_2 = {875, 1080, &enc2_position};
 
     encoder_init(&encoder, &PIND, PD4, PD3, &settings_1);
     //encoder_init(&encoder_2, &PIND, PD7, PD6, 20, 10);

@@ -55,9 +55,15 @@ void update_encoder(encoder_t *enc) {
 
     enc->pin_a_last_state = enc->pin_a_state;
 
-    if ((inc == 1) && (*(enc->settings_p->position_p) < enc->settings_p->limit)) {
+    if (*(enc->settings_p->position_p) < enc->settings_p->limit_min) { // protect underflow
+        *(enc->settings_p->position_p) = enc->settings_p->limit_min;
+    } else if (*(enc->settings_p->position_p) > enc->settings_p->limit_max) { // protect overflow
+        *(enc->settings_p->position_p) = enc->settings_p->limit_max;
+    }
+
+    if ((inc == 1) && (*(enc->settings_p->position_p) < enc->settings_p->limit_max)) { // increment position
         (*(enc->settings_p->position_p))++;
-    } else if ((inc == -1) && (*(enc->settings_p->position_p) > 0)) {
+    } else if ((inc == -1) && (*(enc->settings_p->position_p) > enc->settings_p->limit_min)) { // decrement position
         (*(enc->settings_p->position_p))--;
     }
 }

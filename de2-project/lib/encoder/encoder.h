@@ -21,8 +21,8 @@ typedef struct encoder_s{
 } encoder_t;
 
 typedef struct enc_settings_s {
-    uint16_t limit;
-    uint16_t initial_position;
+    uint16_t limit_min;
+    uint16_t limit_max;
     uint16_t *position_p;
 } enc_settings_t;
 
