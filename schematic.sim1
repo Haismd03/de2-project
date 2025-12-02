@@ -1,0 +1,29 @@
+<circuit version="1.1.0-SR1" rev="2005" stepSize="1000000" stepsPS="1000000" NLsteps="100000" reaStep="1000000" animate="0" >
+
+<item itemtype="Subcircuit" CircId="Uno-1" mainComp="false" Show_id="true" Show_Val="false" Pos="-272,-172" rotation="0" hflip="1" vflip="1" label="Uno-1" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0" Logic_Symbol="false">
+<mainCompProps MainCompId="mega328-109" Frequency="16 MHz" Auto_Load="false" saveEepr="true" MainMcu="true" SerialMon="-1" />
+</item>
+
+<item itemtype="Ssd1306" CircId="Ssd1306-2" mainComp="false" Show_id="true" Show_Val="false" Pos="4,-280" rotation="0" hflip="1" vflip="1" label="Ssd1306-2" idLabPos="-32,-60" labelrot="0" valLabPos="-16,20" valLabRot="0" Color="White" Width="128 _px" Height="64 _px" Rotate="true" Control_Code="60" Frequency="100 _kHz" />
+
+<item itemtype="Rectangle" CircId="Rectangle-3" mainComp="false" Show_id="false" Show_Val="false" Pos="160,-292" rotation="0" hflip="1" vflip="1" label="Rectangle-3" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" H_size="100 _px" V_size="100 _px" Border="2 _px" Z_Value="0" Color="#ff0000" Opacity="1" />
+
+<item itemtype="KY040" CircId="KY040-4" mainComp="false" Show_id="false" Show_Val="false" Pos="176,-112" rotation="90" hflip="1" vflip="1" label="KY040-4" idLabPos="-34,20" labelrot="-90" valLabPos="-16,20" valLabRot="0" Steps="20" />
+
+<item itemtype="KY040" CircId="KY040-5" mainComp="false" Show_id="false" Show_Val="false" Pos="176,-56" rotation="90" hflip="1" vflip="1" label="KY040-5" idLabPos="-34,20" labelrot="-90" valLabPos="-16,20" valLabRot="0" Steps="20" />
+
+<item itemtype="TextComponent" CircId="TextComponent-7" mainComp="false" Show_id="false" Show_Val="false" Pos="208,-68" rotation="0" hflip="1" vflip="1" label="TextComponent-7" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Margin="0 _px" Border="0 _px" Color="#ffffdc" Opacity="0" Font="Helvetica [Cronyx]" Font_Color="#000080" Font_Size="12 _px" Fixed_Width="false" Text="Volume" />
+
+<item itemtype="TextComponent" CircId="TextComponent-8" mainComp="false" Show_id="false" Show_Val="false" Pos="208,-124" rotation="0" hflip="1" vflip="1" label="TextComponent-8" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Margin="0 _px" Border="0 _px" Color="#ffffdc" Opacity="0" Font="Helvetica [Cronyx]" Font_Color="#000080" Font_Size="12 _px" Fixed_Width="false" Text="Tune" />
+
+<item itemtype="TextComponent" CircId="TextComponent-9" mainComp="false" Show_id="false" Show_Val="false" Pos="144,-128" rotation="0" hflip="1" vflip="1" label="TextComponent-9" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Margin="0 _px" Border="0 _px" Color="#ffffdc" Opacity="0" Font="Helvetica [Cronyx]" Font_Color="#000080" Font_Size="12 _px" Fixed_Width="false" Text="Volume" />
+
+<item itemtype="Line" CircId="Line-10" mainComp="false" Show_id="false" Show_Val="false" Pos="188,-356" rotation="0" hflip="1" vflip="1" label="Line-10" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" H_size="0 _px" V_size="34 _px" Border="2 _px" Z_Value="-1" Color="#000000" Opacity="1" />
+
+<item itemtype="Line" CircId="Line-11" mainComp="false" Show_id="false" Show_Val="false" Pos="192,-368" rotation="0" hflip="1" vflip="1" label="Line-11" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" H_size="9 _px" V_size="10 _px" Border="2 _px" Z_Value="-1" Color="#000000" Opacity="1" />
+
+<item itemtype="Line" CircId="Line-13" mainComp="false" Show_id="false" Show_Val="false" Pos="184,-368" rotation="90" hflip="1" vflip="1" label="Line-13" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" H_size="10 _px" V_size="9 _px" Border="2 _px" Z_Value="-1" Color="#000000" Opacity="1" />
+
+<item itemtype="TextComponent" CircId="TextComponent-15" mainComp="false" Show_id="false" Show_Val="false" Pos="136,-312" rotation="0" hflip="1" vflip="1" label="TextComponent-15" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Margin="0 _px" Border="0 _px" Color="#ffffdc" Opacity="0" Font="Helvetica [Cronyx]" Font_Color="#000000" Font_Size="14 _px" Fixed_Width="false" Text=" Radio&#xa;SI4703" />
+
+</circuit>
