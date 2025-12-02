@@ -1,12 +1,11 @@
-
 #ifndef GPIO_H
-#define GPIO_H
+# define GPIO_H
 
 /* 
  * GPIO library for AVR-GCC.
- * (c) 2019-2025 Tomas Fryza, MIT license
+ * (c) 2019-2024 Tomas Fryza, MIT license
  *
- * Developed using PlatformIO and Atmel AVR platform.
+ * Developed using PlatformIO and AVR 8-bit Toolchain 3.6.2.
  * Tested on Arduino Uno board and ATmega328P, 16 MHz.
  */
 
@@ -20,15 +19,15 @@
  * The library contains functions for controlling AVRs' gpio pin(s).
  *
  * @note Based on AVR Libc Reference Manual.
- * @copyright (c) 2019-2025 Tomas Fryza, MIT license
+ * @copyright (c) 2019-2024 Tomas Fryza, MIT license
  * @{
  */
 
-// -- Includes ---------------------------------------------
+// -- Includes -------------------------------------------------------
 #include <avr/io.h>
 
 
-// -- Function prototypes ----------------------------------
+// -- Function prototypes --------------------------------------------
 /**
  * @brief  Configure one output pin.
  * @param  reg Address of Data Direction Register, such as &DDRB
@@ -76,10 +75,12 @@ uint8_t gpio_read(volatile uint8_t *reg, uint8_t pin);
 
 // void gpio_mode_input_nopull(volatile uint8_t *reg, uint8_t pin);
 
-
-// void gpio_toggle(volatile uint8_t *reg, uint8_t pin);
-
-
-/** @} */
+/**
+ * @brief  Toggle value of output pin.
+ * @param  reg Address of Pin Register, such as &PIND
+ * @param  pin Pin designation in the interval 0 to 7
+ * @return none
+ */
+void gpio_toggle(volatile uint8_t *reg, uint8_t pin);
 
 #endif

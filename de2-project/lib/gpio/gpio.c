@@ -1,16 +1,16 @@
 /* 
  * GPIO library for AVR-GCC.
- * (c) 2019-2025 Tomas Fryza, MIT license
+ * (c) 2019-2024 Tomas Fryza, MIT license
  *
- * Developed using PlatformIO and Atmel AVR platform.
+ * Developed using PlatformIO and AVR 8-bit Toolchain 3.6.2.
  * Tested on Arduino Uno board and ATmega328P, 16 MHz.
  */
 
-// -- Includes ---------------------------------------------
+// -- Includes -------------------------------------------------------
 #include <gpio.h>
 
 
-// -- Function definitions ---------------------------------
+// -- Function definitions -------------------------------------------
 /*
  * Function: gpio_mode_output()
  * Purpose:  Configure one output pin.
@@ -18,8 +18,7 @@
  *           pin - Pin designation in the interval 0 to 7
  * Returns:  none
  */
-void gpio_mode_output(volatile uint8_t *reg, uint8_t pin)
-{
+void gpio_mode_output(volatile uint8_t *reg, uint8_t pin) {
     *reg = *reg | (1<<pin);
 }
 
@@ -31,8 +30,7 @@ void gpio_mode_output(volatile uint8_t *reg, uint8_t pin)
  *           pin - Pin designation in the interval 0 to 7
  * Returns:  none
  */
-void gpio_mode_input_pullup(volatile uint8_t *reg, uint8_t pin)
-{
+void gpio_mode_input_pullup(volatile uint8_t *reg, uint8_t pin) {
     *reg = *reg & ~(1<<pin);  // Data Direction Register
     reg++;                    // Change pointer to Data Register
     *reg = *reg | (1<<pin);   // Data Register
@@ -46,8 +44,7 @@ void gpio_mode_input_pullup(volatile uint8_t *reg, uint8_t pin)
  *           pin - Pin designation in the interval 0 to 7
  * Returns:  none
  */
-void gpio_write_low(volatile uint8_t *reg, uint8_t pin)
-{
+void gpio_write_low(volatile uint8_t *reg, uint8_t pin) {
     *reg = *reg & ~(1<<pin);
 }
 
@@ -59,8 +56,7 @@ void gpio_write_low(volatile uint8_t *reg, uint8_t pin)
  *           pin - Pin designation in the interval 0 to 7
  * Returns:  none
  */
-void gpio_write_high(volatile uint8_t *reg, uint8_t pin)
-{
+void gpio_write_high(volatile uint8_t *reg, uint8_t pin) {
     *reg = *reg | (1<<pin);
 }
 
@@ -72,8 +68,7 @@ void gpio_write_high(volatile uint8_t *reg, uint8_t pin)
  *           pin - Pin designation in the interval 0 to 7
  * Returns:  Pin value
  */
-uint8_t gpio_read(volatile uint8_t *reg, uint8_t pin)
-{
+uint8_t gpio_read(volatile uint8_t *reg, uint8_t pin) {
     uint8_t temp;
 
     temp = *reg & (1<<pin);
@@ -95,3 +90,6 @@ uint8_t gpio_read(volatile uint8_t *reg, uint8_t pin)
 /*
  * Function: gpio_toggle()
  */
+void gpio_toggle(volatile uint8_t *reg, uint8_t pin) {
+    *reg = *reg ^ (1 << pin);
+}
