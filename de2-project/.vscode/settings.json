@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "twi.h": "c",
+        "gpio.h": "c",
+        "interrupt.h": "c",
+        "io.h": "c",
+        "delay.h": "c",
+        "timer.h": "c"
+    }
+}
