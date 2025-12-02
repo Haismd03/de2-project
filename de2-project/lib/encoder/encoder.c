@@ -4,7 +4,7 @@
 #include "interrupts.h"
 #include "gpio.h"
 
-uint8_t encoder_init(encoder_t *enc, volatile uint8_t *reg, uint8_t pin_a, uint8_t pin_b, uint16_t limit, uint16_t initial_position) {
+uint8_t encoder_init(encoder_t *enc, volatile uint8_t *reg, uint8_t pin_a, uint8_t pin_b, enc_settings_t *settings) {
     if (enc == NULL) {
         return 1; // error: null pointer
     }
@@ -12,10 +12,8 @@ uint8_t encoder_init(encoder_t *enc, volatile uint8_t *reg, uint8_t pin_a, uint8
     
     enc->pin_a = pin_a;
     enc->pin_b = pin_b;
-    enc->position = initial_position;
+    enc->settings_p = settings;
     enc->reg_p = reg;
-    enc->limit = limit;
-
     enc->pin_a_last_state = gpio_read(reg, pin_a);
 
     return 0; // success
@@ -48,10 +46,10 @@ void update_encoder(encoder_t *enc) {
 
     enc->pin_a_last_state = enc->pin_a_state;
 
-    if ((inc == 1) && (enc->position < enc->limit)) {
-        enc->position++;
-    } else if ((inc == -1) && (enc->position > 0)) {
-        enc->position--;
+    if ((inc == 1) && (*(enc->settings_p->position_p) < enc->settings_p->limit)) {
+        (*(enc->settings_p->position_p))++;
+    } else if ((inc == -1) && (*(enc->settings_p->position_p) > 0)) {
+        (*(enc->settings_p->position_p))--;
     }
 }
 
