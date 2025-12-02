@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include "interrupts.h"
 #include "gpio.h"
+#include "millis.h"
 
 uint8_t encoder_init(encoder_t *enc, volatile uint8_t *reg, uint8_t pin_a, uint8_t pin_b, enc_settings_t *settings) {
     if (enc == NULL) {
@@ -16,6 +17,9 @@ uint8_t encoder_init(encoder_t *enc, volatile uint8_t *reg, uint8_t pin_a, uint8
     enc->reg_p = reg;
     enc->pin_a_last_state = gpio_read(reg, pin_a);
 
+    enc->change_flag = 0;
+    enc->last_update_ms = 0;
+
     return 0; // success
 }
 
@@ -25,6 +29,11 @@ void update_encoder(encoder_t *enc) {
         return; // no change detected
     }
     enc->change_flag = 0; // reset change flag
+
+    if (millis() - enc->last_update_ms < 5) {
+        return; // debounce: ignore changes within 5 ms
+    }
+    enc->last_update_ms = millis();
 
     int8_t inc = 0;
 

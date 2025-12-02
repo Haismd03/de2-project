@@ -13,6 +13,8 @@ typedef struct encoder_s{
     volatile uint8_t pin_a_state;
     volatile uint8_t pin_b_state;
 
+    uint32_t last_update_ms;
+
     uint8_t pin_a_last_state;
 
     struct enc_settings_s *settings_p;
