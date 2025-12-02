@@ -13,7 +13,7 @@
 #include "uart.h"
 
 #include "SI4703.h"
-#include "TWI.h"
+#include "TWI_radio.h"
 
 #define RESET_PIN      PB2
 #define RESET_DDR      DDRB
@@ -438,6 +438,18 @@ static void SI4703_Reset(void)
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
+/**
+ * @brief This function stores RDS data and RSSI value to the given variables.
+ * 
+ * @param RSSI variable for storing the value of RSSI
+ * @param RDSAData variable for storing the first part of the RDS data
+ * @param RDSBData variable for storing the second part of the RDS data
+ * @param RDSCData variable for storing the third part of the RDS data
+ * @param RDSDData variable for storing the fourth part of the RDS data
+ * @return true if all data is succesfully stored
+ * @return false if no data is found
+ */
+
 bool SI4703_GetRxRegs(uint16_t *RSSI, uint16_t *RDSAData, uint16_t *RDSBData, uint16_t *RDSCData, uint16_t *RDSDData)
 {	
 	uint8_t buffer[32];
@@ -456,32 +468,24 @@ bool SI4703_GetRxRegs(uint16_t *RSSI, uint16_t *RDSAData, uint16_t *RDSBData, ui
 
 #include <string.h> 
 
-#define PS_NAME_LENGTH 8 // Název stanice má pevnou délku 8 znaků
+#define PS_NAME_LENGTH 8 // Name of the station has 8 characters
 
-// Globální proměnná pro uložení výsledku (statická alokace je vhodná pro mikrokontroléry)
-static char psName[PS_NAME_LENGTH + 1] = "        "; // Inicializováno na mezery
+// Global variable for storing of the result
+static char psName[PS_NAME_LENGTH + 1] = "        "; // Initialized with spaces
 
 /**
- * @brief Pokouší se dekódovat a sestavit Program Service (PS) Name z RDS dat.
- * * Předpokládá, že globální struktura 'shadow' je aktuálně naplněna daty z čipu.
- * Tato funkce musí být volána opakovaně, dokud se celý 8znakový název nesestaví.
+ * @brief This function tries to decode and assamble Program Service (PS) Name from RDS group.
+ * It anticipates that the global structure 'shadow' is currently filled with the data from the chip.
+ * This function has to be called repeatedly until the whole 8-character name is set.
  *
- * @return true, pokud byla zpracována platná RDS skupina; false, pokud nová data nejsou připravena.
+ * @return true if the valid RDS data was processed
+ * @return false if the new data is not ready
  */
 bool SI4703_DecodeRDS_PSName(uint16_t *StatusRSSI, uint16_t *RDSBData, uint16_t *RDSDData)
 {
-    // 1. Zkontrolovat, zda jsou nová data RDS připravena (RDSR bit v registru 0x0A)
-    // Před voláním této funkce by mělo být voláno SI4703_UpdateRadioInfo()!
-//    if (!(StatusRSSI & 0x8000)) 
-//    {
-//		uart_print("RSSI disabled\n");
-//        return false; // Žádná nová data (nebo data už byla dříve přečtena)
-//    }
-
-    // 2. Kontrola chyb (BLER) pro spolehlivost
-    // Blok A (PI kód) musí být obvykle bez chyb (BLERA = 0).
-    // Blok B (Typ skupiny a offset) by měl mít chybu max. 1.
-    // Pro PS Name musí být signál dobrý, jinak dekódování selže.
+    // Error check BLER
+    // Block A (PI code) usually has to be without any error (BLERA = 0)
+    // Block B should have maximally 1 error.
     uint8_t blera = (*StatusRSSI >> 10) & 0x03;
 	
 	if (blera > 0) 
@@ -489,65 +493,73 @@ bool SI4703_DecodeRDS_PSName(uint16_t *StatusRSSI, uint16_t *RDSBData, uint16_t 
         return false;
     }
 
-    // 3. Extrakce a dekódování RDS Skupiny (Blok B)
+    // Extraction and decoding of the RDS group (Block B)
     uint16_t RDSB = *RDSBData;
     uint16_t RDSD = *RDSDData;
     
-    // Extrahovat Typ skupiny (Group Type) a Verzi (Version)
-    uint8_t GroupType = (RDSB >> 12) & 0x0F; // Bity B15-B12 (Typ 0-15)
-    uint8_t Version   = (RDSB >> 11) & 0x01; // Bit B11 (Verze A=0 nebo B=1)
+    // Extraction of the Group Type and Version
+    uint8_t GroupType = (RDSB >> 12) & 0x0F; // Bits B15-B12
+    uint8_t Version   = (RDSB >> 11) & 0x01; // Bit B11 (Verse A=0 or B=1)
     
-    // PS Name (název stanice) se vysílá pouze ve skupinách 0A a 0B.
+    // PS Name is only broadcasted in groups 0A and 0B
     if (GroupType == 0) 
     {
-        // Extrahovat PS Name Address (Offset)
-        // V obou případech (0A i 0B) je segmentový offset definován bity B1-B0 bloku B.
-        uint8_t PSSegmentOffset = RDSB & 0x03; // Bity B1-B0 dávají offset 0, 1, 2 nebo 3.
+        // Extraction of the PS Name Address (Offset) 
+        // In both cases segment offset is defined with bites B1-B0 of Block B
+        uint8_t PSSegmentOffset = RDSB & 0x03; // Bits B1-B0 give offset 0, 1, 2 or 3.
         
-        // Vypočítat index do pole psName
+        // Calculate index to the field psName
         int index = PSSegmentOffset * 2; // 0 -> 0, 1 -> 2, 2 -> 4, 3 -> 6
         
         if (index < PS_NAME_LENGTH)
         {
-            // Znak 1 (horní byte) a Znak 2 (dolní byte) jsou vždy v Bloku D (RDSD)
-            // Blok D nese 2 ASCII znaky pro PS Name
-            psName[index]     = (char)((RDSD >> 8) & 0xFF); // Znak 1 (High Byte)
-            psName[index + 1] = (char)(RDSD & 0xFF);        // Znak 2 (Low Byte)
+            // Character 1 (high byte) and character 2 (low byte) are always in Block D
+            // Blok D carries 2 ASCII characters for PS Name
+            psName[index]     = (char)((RDSD >> 8) & 0xFF); // Character 1 (High Byte)
+            psName[index + 1] = (char)(RDSD & 0xFF);        // Character 2 (Low Byte)
         }
     }
 
-    // 4. Ukončení řetězce (pro jistotu, ačkoliv alokace je +1)
+    // End of the chain
     psName[PS_NAME_LENGTH] = '\0'; 
     
-    return true; // Data byla zpracována (i když nemusela být typu 0A/0B)
+    return true;
 }
 
-// Funkce pro získání aktuálního PS Názvu (použít v main.c)
+/**
+ * @brief This function gets the current PS Name
+ * 
+ * @return char* PS Name
+ */
+
+// Function for getting the current PS Name
 char* SI4703_GetPSName(void)
 {
     return psName;
 }
 
+/**
+ * @brief This function reads the registers from the chip and copies the data from the field SI4703_Regs to shadow structure
+ * 
+ * @return true if all data is succesfully copied
+ * @return false if the error during the reading of the registers occurs
+ */
+
 bool SI4703_UpdateRadioInfo(void)
 {
-    // 1. Přečte registry z čipu do pole SI4703_Regs
+    // Reads the registers from the chip to field SI4703_Regs
     if (!SI4703_RxRegs()) {
         return false;
     }
 
-    // 2. SYNCHRONIZACE: Zkopíruje data z pole SI4703_Regs do shadow struktury.
-    // POZOR: Struktura shadow má registry 0x0A až 0x0F na indexech 0 až 5.
-    // Zbytek registrů je seřazen od 0x00 do 0x09 na indexech 6 až 15.
-    
-    // Kopírování registrů 0x0A (STATUSRSSI) až 0x0F (RDSD)
+    // Synchronization - copies the data from the field SI4703_Regs to shadow structure
     for (int i = 0; i < 6; i++) {
         shadow.word[i] = SI4703_Regs[10 + i];
     }
-    
-    // Kopírování registrů 0x00 (DEVICEID) až 0x09 (BOOTCONFIG)
+
     for (int i = 0; i < 10; i++) {
         shadow.word[6 + i] = SI4703_Regs[i];
     }
 
-    return true; // Čtení i synchronizace proběhly úspěšně
+    return true;
 }
