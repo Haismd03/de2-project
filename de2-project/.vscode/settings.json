@@ -4,6 +4,7 @@
         "gpio.h": "c",
         "interrupt.h": "c",
         "io.h": "c",
-        "delay.h": "c"
+        "delay.h": "c",
+        "timer.h": "c"
     }
 }

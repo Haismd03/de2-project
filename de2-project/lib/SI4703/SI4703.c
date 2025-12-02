@@ -466,12 +466,10 @@ bool SI4703_GetRxRegs(uint16_t *RSSI, uint16_t *RDSAData, uint16_t *RDSBData, ui
 	return true;
 }
 
-#include <string.h> 
-
 #define PS_NAME_LENGTH 8 // Name of the station has 8 characters
 
 // Global variable for storing of the result
-static char psName[PS_NAME_LENGTH + 1] = "        "; // Initialized with spaces
+static char psName[PS_NAME_LENGTH + 1] = "        "; // Initialization with spaces
 
 /**
  * @brief This function tries to decode and assamble Program Service (PS) Name from RDS group.
@@ -537,6 +535,7 @@ char* SI4703_GetPSName(void)
 {
     return psName;
 }
+
 
 /**
  * @brief This function reads the registers from the chip and copies the data from the field SI4703_Regs to shadow structure
