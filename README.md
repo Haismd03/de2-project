@@ -1,6 +1,16 @@
 # FM radio receiver with digital tuning
 
 ## License
+This project is distributed under the MIT License.
+See the LICENSE file for full license text.
+
+Parts of the project include third-party libraries covered by their respective licenses:
+- AVR-GCC teaching libraries by Tomáš Fryza — MIT License © 2019–2024
+- SI4703 library by KiKi
+- oled library by Michael Köhler — Copyright 2016 Skie-Systems
+- font library by Michael Köhler — Copyright 2018 Skie-Systems
+
+All third-party components retain their original licenses and copyrights.
 
 ## Team members
 - Tadeáš Fojtách (responsible for OLED display configuration)
