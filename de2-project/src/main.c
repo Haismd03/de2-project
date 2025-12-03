@@ -21,6 +21,8 @@
 
 #define BUTTON_PIN PD7
 
+#define DEBUG_PRINT
+
 // ================================================================================= Radio =================================================================================
 
 uint16_t brnoRadios[41] = { 876, 883, 889, 895, 899, 904, 910, 920, 926, 931,
@@ -55,6 +57,9 @@ int main(void) {
     SI4703_Init();
     SI4703_SetVolume(model.volume);
     //sweep();
+
+    // initialize display
+    oled_init(OLED_DISP_ON);
 
     // initialize millis
     millis_init();

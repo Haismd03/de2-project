@@ -31,13 +31,18 @@ void draw_static_screen(project_model_t *model)
 
     // check if anything changed
     if (strcmp(model->station_name, previousName) == 0 &&
-        model->frequency == previousFrequency &&
-        model->volume == previousVolume) {
+    model->frequency == previousFrequency &&
+    model->volume == previousVolume) {
         // No changes, skip redraw
         return;
     }
 
-    oled_init(OLED_DISP_ON);
+    // update previous vars to current
+    strcpy(previousName, model->station_name);
+    previousFrequency = model->frequency;
+    previousVolume = model->volume;
+
+    //oled_init(OLED_DISP_ON);
     oled_clrscr();
 
     // Title
