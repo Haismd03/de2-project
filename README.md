@@ -11,6 +11,7 @@
 This projet deals with controling the radio module SI4703 using Arduino UNO microcontroller and C programming language. It's goal is to sweep through the radio stations typically receivable in Brno, determine those which radio is really able to receive, and provide them to the user. Two rotary encoders are used, one for radio tuning and one for the volume control. To inform the user about the currently tuned station and frequency, these data is displayed on the small OLED display.
 
 ## Scheme with complete wiring of the device
+<img width="982" height="743" alt="image" src="https://github.com/user-attachments/assets/9915069b-c59f-4ee9-aef9-f67ccab1944f" />
 
 ## Usage manual
 
