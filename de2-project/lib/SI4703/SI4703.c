@@ -39,12 +39,12 @@ bool SI4703_Init()
 	/* SDIO Low */
 	//SI4703_PORT &= ~_BV(SI4703_SDIO);
 	
-	uart_print("SI4703_Init 1\n");
+	uart_puts("SI4703_Init 1\n");
 	
 	/* SI4703 Reset */
 	//SI4703_Reset();
 	
-	uart_print("SI4703_Init 2\n");
+	uart_puts("SI4703_Init 2\n");
 	
 	
 	uint8_t Si4703_rstPin=2;
@@ -65,16 +65,16 @@ bool SI4703_Init()
 	/* Init TWI(I2C) */
 	TWI_Init();
 	
-	uart_print("SI4703_Init 3\n");
+	uart_puts("SI4703_Init 3\n");
 	
 	if(!SI4703_RxRegs()){
-		uart_print("SI4703_Init 4 failed\n");
+		uart_puts("SI4703_Init 4 failed\n");
 		return false;
 	}
 	
 	SI4703_UpdateRadioInfo();
 	
-	uart_print("SI4703_Init 4 \n");
+	uart_puts("SI4703_Init 4 \n");
 	
 	/* Enable Oscillator  */
 	SI4703_Regs[REG_TEST1] = 0x8100;		/* AN230 page 12, why 0x8100 ??? */
@@ -142,8 +142,8 @@ bool SI4703_Init()
 	//shadow.reg.SYSCONFIG2.bits.VOLUME=2;
 	
 	
-	//uart_print_number(SI4703_Regs[REG_SYSCONFIG2]);
-	//uart_print(" \n");
+	//uart_puts_number(SI4703_Regs[REG_SYSCONFIG2]);
+	//uart_puts(" \n");
 	
 	SI4703_TxRegs(); //Update
 	
@@ -158,9 +158,9 @@ bool SI4703_Init()
 	
 	_delay_ms(100);
 	
-	uart_print("Freq=");
-	//uart_print(uart_intToStr(SI4703_GetFreq(),10)) ;
-	uart_print("\n");
+	uart_puts("Freq=");
+	//uart_puts(uart_intToStr(SI4703_GetFreq(),10)) ;
+	uart_puts("\n");
 	return true;
 }
 
@@ -283,7 +283,7 @@ void gotoChannel(int newChannel){
 	//while(1) {
 	//SI4703_RxRegs();
 	//if( (SI4703_Regs[REG_STATUSRSSI] & (1<<IDX_STC)) != 0) break; //Tuning complete!
-	//uart_print("1. gotoChannel Tuning \n");
+	//uart_puts("1. gotoChannel Tuning \n");
 	//}
 
 	SI4703_RxRegs();
@@ -294,7 +294,7 @@ void gotoChannel(int newChannel){
 	//while(1) {
 	//SI4703_RxRegs();
 	//if( (SI4703_Regs[REG_STATUSRSSI] & (1<<IDX_STC)) == 0) break; //Tuning complete!
-	//uart_print("2. gotoChannel Waiting... \n");
+	//uart_puts("2. gotoChannel Waiting... \n");
 	//}
 }
 
@@ -405,12 +405,12 @@ static bool SI4703_TxRegs()
 	
 	buffer[6] = shadow.reg.SYSCONFIG2.word >> 8;// SI4703_Regs[REG_SYSCONFIG2] >> 8;
 	buffer[7] = shadow.reg.SYSCONFIG2.word  & 0xFF; //SI4703_Regs[REG_SYSCONFIG2] & 0xFF;
-	//uart_print("REG_SYSCONFIG2=");
-	//uart_print_number(SI4703_Regs[REG_SYSCONFIG2]);
-	//uart_print(" \n");
-	//uart_print("shadow.reg\n");
-	//uart_print_number(shadow.reg.SYSCONFIG2.word);
-	//uart_print("\n");
+	//uart_puts("REG_SYSCONFIG2=");
+	//uart_puts_number(SI4703_Regs[REG_SYSCONFIG2]);
+	//uart_puts(" \n");
+	//uart_puts("shadow.reg\n");
+	//uart_puts_number(shadow.reg.SYSCONFIG2.word);
+	//uart_puts("\n");
 	
 	
 	
@@ -420,7 +420,7 @@ static bool SI4703_TxRegs()
 	buffer[11] = SI4703_Regs[REG_TEST1] & 0xFF;
 	
 	if(!TWI_TxBuffer(SI4703_DEVICEADDR, buffer, sizeof(buffer))) return false;
-	//uart_print("k;k;k;lk;lk;lkk;klmkjlkjlkjlkjlkjlj\n");
+	//uart_puts("k;k;k;lk;lk;lkk;klmkjlkjlkjlkjlkjlj\n");
 	
 	
 	return true;

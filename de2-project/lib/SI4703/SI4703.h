@@ -314,6 +314,7 @@ static shadow_t shadow;  // Static instance of the shadow register structure
 
 //////////////////////////////////////////////////////////////////////////
 
+/*
 // Band Settings
 static int _band;					// Band Range code
 static int _space;					// Band Spacing code
@@ -328,6 +329,7 @@ static int _seekth;				// Seek Threshold
 static int _skcnt;					// Seek Clicks Number Threshold
 static int _sksnr;					// Seek Signal/Noise Ratio
 static int _agcd;					// AGC disable
+*/
 
 
 //------------------------------------------------------------------------------------------------------------
