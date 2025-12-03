@@ -156,3 +156,53 @@ void twi_readfrom_mem_into(uint8_t addr, uint8_t memaddr, volatile uint8_t *buf,
         twi_stop();
     }
 }
+
+
+
+bool twi_start_radio(uint8_t address, uint8_t read_write)
+{
+    TWCR = (1 << TWSTA) | (1 << TWINT) | (1 << TWEN); // Send start condition
+    while (!(TWCR & (1 << TWINT))); // Wait for start condition to be transmitted
+    
+    TWDR = (address << 1) | read_write; // Load address and R/W bit
+    TWCR = (1 << TWINT) | (1 << TWEN); // Start transmission
+    while (!(TWCR & (1 << TWINT))); // Wait for completion
+    
+    return (TWSR & TWI_TWS_MASK) == TWI_MT_SLA_ACK || (TWSR & TWI_TWS_MASK) == TWI_MR_SLA_ACK;
+}
+
+bool TWI_RxBuffer(uint8_t address, uint8_t *data, uint8_t length)
+{
+    if (!twi_start_radio(address, TWI_READ)) return false;
+    
+    for (uint8_t i = 0; i < length; i++)
+    {
+        //data[i] = twi_read(i < (length - 1)); // Send ACK for all but last byte
+
+        if(i < (length - 1))
+        {
+            data[i] = twi_read(TWI_ACK);
+        }
+        else
+        {
+            data[i] = twi_read(TWI_NACK);
+        }
+    }
+    
+    twi_stop();
+    return true;
+}
+
+bool TWI_TxBuffer(uint8_t address, const uint8_t *data, uint8_t length)
+{
+    if (!twi_start_radio(address, TWI_WRITE)) return false;
+    
+    for (uint8_t i = 0; i < length; i++)
+    {
+        twi_write(data[i]);
+    }
+    
+    twi_stop();
+	
+    return true;
+}
