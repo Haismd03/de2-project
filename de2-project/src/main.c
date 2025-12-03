@@ -19,8 +19,6 @@
 #include "radio.h"
 #include "display.h"
 
-#define BUTTON_PIN PD7
-
 // ================================================================================= Radio =================================================================================
 
 uint16_t brnoRadios[41] = { 876, 883, 889, 895, 899, 904, 910, 920, 926, 931,
@@ -67,16 +65,17 @@ int main(void) {
     SI4703_SetVolume(model.volume);
     SI4703_SetFreq(frequencyFloat);
 
-    // encoder
+    // encoder - volume
     enc_settings_t volume_settings = {0, 15, &model.volume};
-    //enc_settings_t frequency_settings = {875, 1080, &model.frequency};
-    //enc_settings_t radion_index_settings = {0, sizeof(brnoRadios)/sizeof(brnoRadios[0]) - 1, &model.radio_index};
+    // encoder - frequency & radio index
+    enc_settings_t radio_index_settings = {0, sizeof(brnoRadios)/sizeof(brnoRadios[0]) - 1, &model.radio_index};
+    enc_settings_t frequency_settings = {875, 1080, &model.frequency};
 
     encoder_init(&volume_encoder, &PIND, PD4, PD3, &volume_settings);
-    //encoder_init(&frequency_encoder, &PIND, PD6, PD5, &radion_index_settings);
+    encoder_init(&frequency_encoder, &PIND, PD6, PD5, &radio_index_settings);
     
     // Last millis
-    uint32_t prevMillis_getRxRegs = millis();
+    uint32_t prevMillis_getRxRegs = 0;
 
     sei();
 
@@ -88,8 +87,13 @@ int main(void) {
 
     while(1) {
 
+        // change frequency encoder settings based on button state, debounce protected
+        uint8_t button_state = gpio_read(&PINB, BUTTON_PIN);
+        encoder_change_frequency_settings(&frequency_encoder, button_state, &radio_index_settings, &frequency_settings);
+
         // update encoders with data from ISR
         update_encoder(&volume_encoder);
+        update_encoder(&frequency_encoder);
 
         // TODO: update radio regs
 
@@ -121,5 +125,5 @@ int main(void) {
 ISR(PCINT2_vect) {
 
     update_encoder_isr(&volume_encoder);
-    //update_encoder_isr(&frequency_encoder);
-    }
+    update_encoder_isr(&frequency_encoder);
+}
