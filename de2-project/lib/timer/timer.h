@@ -12,6 +12,7 @@
 /**
  * @file 
  * @defgroup fryza_timer Timer Library <timer.h>
+ * @ingroup external_libraries
  * @code #include <timer.h> @endcode
  *
  * @brief Timer library for AVR-GCC.

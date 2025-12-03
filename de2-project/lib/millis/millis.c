@@ -19,11 +19,6 @@ ISR(TIMER1_COMPA_vect) {
     ms_counter++;   // increments every 1 ms
 }
 
-/**
- * @brief Get the current milliseconds count
- * 
- * @return uint32_t Current milliseconds count
- */
 uint32_t millis(void) {
     uint32_t m;
     TIMSK1 &= ~(1 << OCIE1A); // disable timer interrupt
