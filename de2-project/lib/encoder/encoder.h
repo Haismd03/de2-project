@@ -8,14 +8,11 @@ typedef struct encoder_s{
     uint8_t pin_b;
     volatile uint8_t *reg_p; // pin register
 
-    volatile uint8_t change_flag;
+    int8_t inc; // increment/decrement value
 
-    volatile uint8_t pin_a_state;
-    volatile uint8_t pin_b_state;
+    uint8_t ab_state; // quadrature state
 
-    uint8_t pin_a_last_state;
-
-    uint32_t last_update_ms; // used for debouncing
+    //uint32_t last_update_ms; // used for debouncing
 
     struct enc_settings_s *settings_p;
 } encoder_t;
