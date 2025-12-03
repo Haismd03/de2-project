@@ -43,6 +43,7 @@ project_model_t model;
 int main(void) {	
 
     // intialize model
+    model.frequency_encoder_mode = 0; // start in radio index mode
     model.volume = 0;
     model.radio_index = 0;
     model.frequency = brnoRadios[model.radio_index];
