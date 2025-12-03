@@ -13,7 +13,8 @@
 #include "uart.h"
 
 #include "SI4703.h"
-#include "TWI_radio.h"
+//#include "TWI_radio.h"
+#include "twi.h"
 
 #define RESET_PIN      PB2
 #define RESET_DDR      DDRB
@@ -53,7 +54,7 @@ bool SI4703_Init()
 	#define RESET_PIN_PORT PORTB
 	
 	RESET_PIN_DDR |= (1 << Si4703_rstPin);  //  Ορίστε το Si4703_rstPin (10(PB2)) ως έξοδο //pinMode(resetPin, OUTPUT);
-	TWI_DDR |= (1 << Si4703_sdioPin); // Ορίστε το Si4703_sdioPin ως έξοδο pinMode(SDIO, OUTPUT); //SDIO is connected to A4 for I2C
+	DDRC |= (1 << Si4703_sdioPin); // Ορίστε το Si4703_sdioPin ως έξοδο pinMode(SDIO, OUTPUT); //SDIO is connected to A4 for I2C
 	
 	TWI_PORT &= ~(1 << Si4703_sdioPin); // Θέσε το Si4703_sdioPin σε LOW//  digitalWrite(SDIO, LOW);
 	RESET_PIN_PORT &= ~(1 << Si4703_rstPin); //Θέσε το Si4703_rstPin digitalWrite(resetPin, LOW); //Put Si4703 into reset
@@ -63,7 +64,7 @@ bool SI4703_Init()
 	_delay_ms(1); //Allow Si4703 to come out of reset
 	
 	/* Init TWI(I2C) */
-	TWI_Init();
+	twi_init();
 	
 	uart_puts("SI4703_Init 3\n");
 	
@@ -78,13 +79,19 @@ bool SI4703_Init()
 	
 	/* Enable Oscillator  */
 	SI4703_Regs[REG_TEST1] = 0x8100;		/* AN230 page 12, why 0x8100 ??? */
-	if(!SI4703_TxRegs()) return false;
-	
+	if(!SI4703_TxRegs()) 
+	{
+		uart_puts("TxRegs() failed\n");
+		return false;
+	}
 	/* Delay minimum 500 ms, AN230 page 12*/
 	_delay_ms(500);
 	
-	if(!SI4703_RxRegs()) return false;
-	
+	if(!SI4703_RxRegs()) 
+	{
+		uart_puts("RxRegs() failed\n");
+		return false;
+	}
 	/* Power-up sequence */
 	SI4703_Regs[REG_POWERCFG] |= (1 << IDX_DMUTE);
 	SI4703_Regs[REG_POWERCFG] |= (1 << IDX_ENABLE);

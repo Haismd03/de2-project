@@ -26,7 +26,7 @@
 
 // -- Includes ---------------------------------------------
  #include <avr/io.h>
-
+ #include <stdbool.h>
 
 // -- Defines ----------------------------------------------
 /**
@@ -57,6 +57,12 @@
 #define DDR(_x) (*(&_x - 1)) /**< @brief Address of Data Direction Register of port _x */
 #define PIN(_x) (*(&_x - 2)) /**< @brief Address of input register of port _x */
 
+
+/* Status Register Mask */
+#define TWI_TWS_MASK  0xF8
+
+#define TWI_MT_SLA_ACK 0x18
+#define TWI_MR_SLA_ACK 0x40
 
 // -- Function prototypes ----------------------------------
 /**
@@ -129,5 +135,12 @@ uint8_t twi_test_address(uint8_t addr);
 void twi_readfrom_mem_into(uint8_t addr, uint8_t memaddr, volatile uint8_t *buf, uint8_t nbytes);
 
 /** @} */
+
+
+bool TWI_RxBuffer(uint8_t address, uint8_t *data, uint8_t length);
+
+bool TWI_TxBuffer(uint8_t address, const uint8_t *data, uint8_t length);
+
+void TWI_Init(void);
 
 #endif
