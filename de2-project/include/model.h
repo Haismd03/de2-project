@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define BUTTON_PIN PD7
+
 typedef struct project_model_s {
     uint16_t volume;
     uint16_t frequency;
