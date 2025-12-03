@@ -40,3 +40,27 @@ float int_to_float(uint16_t integerValue)
 
     return floatValue;
 }
+
+void radio_update(project_model_t *model)
+{
+    static uint16_t previousFrequency = 0;
+    static uint16_t previousVolume = 0;
+
+    // check if frequency changed
+    if(model->frequency != previousFrequency)
+    {
+        previousFrequency = model->frequency;
+        float frequencyFloat = int_to_float(model->frequency);
+        SI4703_SetFreq(frequencyFloat);     // change frequency
+    }
+    if(model->volume != previousVolume)
+    {
+        previousVolume = model->volume;
+        SI4703_SetVolume(model->volume);    // change volume
+    }
+    else
+    {
+        return;     // no change
+    }
+
+}

@@ -29,8 +29,6 @@ uint16_t brnoRadios[41] = { 876, 883, 889, 895, 899, 904, 910, 920, 926, 931,
                             1038, 1041, 1045, 1051, 1055, 1058, 1062, 1065, 1070, 1075, 1078}; 
 
 
-float foundRadios[41];
-
 // ================================================================================ Encoder ===============================================================================
 
 encoder_t volume_encoder;
@@ -42,8 +40,8 @@ project_model_t model;
 int main(void) {	
 
     // intialize model
-    model.volume = 0;
-    model.radio_index = 0;
+    model.volume = 7;
+    model.radio_index = 34;
     model.frequency = brnoRadios[model.radio_index];
 
     gpio_mode_input_pullup(&DDRD, BUTTON_PIN);
@@ -63,9 +61,9 @@ int main(void) {
     millis_init();
 
     // TODO: remove
-    float frequencyFloat = int_to_float(model.frequency);
-    SI4703_SetVolume(model.volume);
-    SI4703_SetFreq(frequencyFloat);
+    // float frequencyFloat = int_to_float(model.frequency);
+    // SI4703_SetVolume(model.volume);
+    // SI4703_SetFreq(frequencyFloat);
 
     // encoder
     enc_settings_t volume_settings = {0, 15, &model.volume};
@@ -91,17 +89,18 @@ int main(void) {
         // update encoders with data from ISR
         update_encoder(&volume_encoder);
 
-        // TODO: update radio regs
-
-        // read radio data every 1.5s
-        if (millis() - prevMillis_getRxRegs >= 1500) {
+        // read radio data every 0.5s
+        if (millis() - prevMillis_getRxRegs >= 500) {
             prevMillis_getRxRegs = millis();
 
             radio_read_regs(&model);
         }
 
         // update display
-        draw_static_screen(&model);
+        display_update(&model);
+
+        // radio update
+        radio_update(&model);
 
         #ifdef DEBUG_PRINT
         asm volatile("" ::: "memory");
