@@ -8,6 +8,7 @@ uint16_t brnoRadios[41] = { 876, 883, 889, 895, 899, 904, 910, 920, 926, 931,
                             994, 999, 1002, 1004, 1008, 1013, 1020, 1025, 1030, 1034,
                             1038, 1041, 1045, 1051, 1055, 1058, 1062, 1065, 1070, 1075, 1078}; 
 
+
 void radio_read_regs(project_model_t *model) {
     uint16_t RSSI_raw;
     uint16_t RDSA, RDSB, RDSC, RDSD;
