@@ -24,11 +24,10 @@ This projet deals with controling the radio module SI4703 using Arduino UNO micr
   SI4703 is a radio module used for receiving FM radio broadcast. I uses 3.3V logic and I2C to communicate with the controller. To activate the receiver, some device, that can be used as antenna (for example headphones), must be plugged in to the connector. This device is also used for reproducing the decoded received radio signal. 
 
   ### SSD1306
-  SSD1306 is an oled display used to view volume and frequency set by user as well as name of radio channel given by SI4703(FM radio modul). It uses I2C comunication, liberaries used are from DE2 courses. 
-  
-  Display code logic:
-  
-  <img width="432" height="407" alt="image" src="https://github.com/user-attachments/assets/5aa00e57-46aa-4fbc-9121-8540e3192aac" />
+  SSD1306 is an oled display used to view volume and frequency set by user as well as name of radio channel and RSSI(Received Signal Strength Indicator) given by SI4703(FM radio modul). It uses I2C comunication, used liberaries oled and twi are from DE2 courses.      
+  <img width="462" height="424" alt="image" src="https://github.com/user-attachments/assets/2a181d5e-2865-45e9-8024-23a666c99a78" />  
+  -Display logic diagram
+
 
 
 
