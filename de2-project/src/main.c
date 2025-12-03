@@ -59,9 +59,10 @@ int main(void) {
     // initialize millis
     millis_init();
 
-    /*float frequencyFloat = int_to_float(model.frequency);
+    // TODO: remove
+    float frequencyFloat = int_to_float(model.frequency);
     SI4703_SetVolume(model.volume);
-    SI4703_SetFreq(frequencyFloat);*/
+    SI4703_SetFreq(frequencyFloat);
 
     // encoder
     enc_settings_t volume_settings = {0, 15, &model.volume};
@@ -89,16 +90,15 @@ int main(void) {
 
         // TODO: update radio regs
 
-        // update radio data every 1.5s
+        // read radio data every 1.5s
         if (millis() - prevMillis_getRxRegs >= 1500) {
             prevMillis_getRxRegs = millis();
 
             radio_read_regs(&model);
         }
 
+        // update display
         draw_static_screen(&model);
-
-
 
         #ifdef DEBUG_PRINT
         asm volatile("" ::: "memory");
