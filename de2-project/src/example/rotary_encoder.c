@@ -9,7 +9,7 @@
 #include "millis.h"
 
 #define LED_BUILTIN PB5  // On-board LED
-#define BUTTON_PIN PB0  // On-board Button
+#define BUTTON_PIN PD7  // On-board Button
 
 encoder_t encoder;
 //encoder_t encoder_2;
