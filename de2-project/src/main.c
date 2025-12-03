@@ -18,6 +18,9 @@
 #include "model.h"
 #include "radio.h"
 #include "display.h"
+#include "encoder_implementation.h"
+
+//#define DEBUG_PRINT
 
 // ================================================================================= Radio =================================================================================
 
@@ -88,7 +91,7 @@ int main(void) {
     while(1) {
 
         // change frequency encoder settings based on button state, debounce protected
-        uint8_t button_state = gpio_read(&PINB, BUTTON_PIN);
+        uint8_t button_state = !gpio_read(&PIND, BUTTON_PIN);
         encoder_change_frequency_settings(&frequency_encoder, button_state, &radio_index_settings, &frequency_settings);
 
         // update encoders with data from ISR
@@ -109,12 +112,12 @@ int main(void) {
 
         #ifdef DEBUG_PRINT
         asm volatile("" ::: "memory");
-        if (*(volume_encoder.settings_p->position_p) != last_position/* || encoder_2.position != last_position_2*/) {
-            //sprintf(uart_msg, "Encoder position: \t1: %d \talias 1: %d \talias 2: %d \tsettings: %d \tmillis: %lu\n", *(encoder.settings_p->position_p), enc1_position, enc2_position, var_number, millis());
-            sprintf(uart_msg, "Encoder position: \t1: %d \talias 1: %d \tmillis: %lu\n", *(volume_encoder.settings_p->position_p), model.volume, millis());
+        if (*(frequency_encoder.settings_p->position_p) != last_position/* || encoder_2.position != last_position_2*/) {
+            sprintf(uart_msg, "Encoder position: \t1: %d \talias 1: %d \talias 2: %d \tsettings: %d \tbutton_state: %d \tmillis: %lu\n", *(frequency_encoder.settings_p->position_p), model.radio_index, model.frequency, test, button_state, millis());
+            //sprintf(uart_msg, "Encoder position: \t1: %d \talias 1: %d \tmillis: %lu\n", *(volume_encoder.settings_p->position_p), model.volume, millis());
             //sprintf(uart_msg, "Encoder position: \t1: %d \t2: %d \talias: %d\n", encoder.position, encoder_2.position, *enc_allias_p);
             uart_puts(uart_msg);
-            last_position = *(volume_encoder.settings_p->position_p);
+            last_position = *(frequency_encoder.settings_p->position_p);
             //last_position_2 = encoder_2.position;
         }
         #endif
