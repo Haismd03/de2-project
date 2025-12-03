@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025 David Haisman
+ * MIT License
+ */
+
 #ifndef __ENCODER_IMPLEMENTATION_H__
 #define __ENCODER_IMPLEMENTATION_H__
 

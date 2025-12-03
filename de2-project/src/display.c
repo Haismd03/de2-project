@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025 Tadeáš Fojtách
+ * MIT License
+ */
+
 #include <stdint.h>
 #include "oled.h"
 #include "model.h"

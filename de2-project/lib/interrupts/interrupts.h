@@ -1,5 +1,7 @@
-#ifndef INTERRUPTS_H
-#define INTERRUPTS_H
+/*
+ * Copyright (c) 2025 David Haisman
+ * MIT License
+ */
 
 /**
  * @file interrupts.h
@@ -18,6 +20,8 @@
  * @{
  */
 
+#ifndef INTERRUPTS_H
+#define INTERRUPTS_H
 
 #include <stdint.h>
 

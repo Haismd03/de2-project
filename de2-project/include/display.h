@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025 Tadeáš Fojtách
+ * MIT License
+ */
+
 #ifndef __DISPLAY_H__
 #define __DISPLAY_H__
 

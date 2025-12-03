@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025 David Haisman
+ * MIT License
+ */
+
 #ifndef __MILLIS_H__
 #define __MILLIS_H__
 

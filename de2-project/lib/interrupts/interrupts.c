@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 David Haisman
+ * MIT License
+ */
 
 #include <avr/interrupt.h>
 #include <stdint.h>

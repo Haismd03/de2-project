@@ -1,5 +1,7 @@
-#ifndef ENCODER_H
-#define ENCODER_H
+/*
+ * Copyright (c) 2025 David Haisman
+ * MIT License
+ */
 
 /**
  * @file encoder.h
@@ -17,6 +19,10 @@
  * @copyright Copyright (c) 2025
  * @{
  */
+
+#ifndef ENCODER_H
+#define ENCODER_H
+
 
 #include <stdint.h>
 

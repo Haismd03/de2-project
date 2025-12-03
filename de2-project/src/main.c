@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025 David Haisman, Karel Matoušek, Tadeáš Fojtách
+ * MIT License
+ */
+
 // standart libraries
 #include <avr/io.h>
 #include <util/delay.h>

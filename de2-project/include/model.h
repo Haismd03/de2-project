@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025 David Haisman
+ * MIT License
+ */
+
 #ifndef __MODEL_H__
 #define __MODEL_H__
 

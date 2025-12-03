@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025 Karel Matoušek
+ * MIT License
+ */
+
 #ifndef __RADIO_H__
 #define __RADIO_H__¨
 

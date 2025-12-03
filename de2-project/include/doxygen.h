@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025 David Haisman
+ * MIT License
+ */
+
 /**
  * @defgroup external_libraries External Libraries
  * @brief External libraries used in this project.
