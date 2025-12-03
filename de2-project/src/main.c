@@ -93,7 +93,7 @@ int main(void) {
 
         // change frequency encoder settings based on button state, debounce protected
         uint8_t button_state = !gpio_read(&PIND, BUTTON_PIN);
-        encoder_change_frequency_settings(&frequency_encoder, button_state, &radio_index_settings, &frequency_settings);
+        encoder_change_frequency_settings(&model, &frequency_encoder, button_state, &radio_index_settings, &frequency_settings);
 
         // update encoders with data from ISR
         update_encoder(&volume_encoder);
@@ -114,7 +114,7 @@ int main(void) {
         #ifdef DEBUG_PRINT
         asm volatile("" ::: "memory");
         if (*(frequency_encoder.settings_p->position_p) != last_position/* || encoder_2.position != last_position_2*/) {
-            sprintf(uart_msg, "Encoder position: \t1: %d \talias 1: %d \talias 2: %d \tsettings: %d \tbutton_state: %d \tmillis: %lu\n", *(frequency_encoder.settings_p->position_p), model.radio_index, model.frequency, test, button_state, millis());
+            sprintf(uart_msg, "Encoder position: \t1: %d \talias 1: %d \talias 2: %d \tsettings: %d \tbutton_state: %d \tmillis: %lu\n", *(frequency_encoder.settings_p->position_p), model.radio_index, model.frequency, model.frequency_encoder_mode, button_state, millis());
             //sprintf(uart_msg, "Encoder position: \t1: %d \talias 1: %d \tmillis: %lu\n", *(volume_encoder.settings_p->position_p), model.volume, millis());
             //sprintf(uart_msg, "Encoder position: \t1: %d \t2: %d \talias: %d\n", encoder.position, encoder_2.position, *enc_allias_p);
             uart_puts(uart_msg);
