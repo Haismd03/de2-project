@@ -18,8 +18,9 @@
 #include "model.h"
 #include "radio.h"
 #include "display.h"
+#include "encoder_implementation.h"
 
-#define BUTTON_PIN PD7
+//#define DEBUG_PRINT
 
 // ================================================================================= Radio =================================================================================
 
@@ -42,6 +43,7 @@ project_model_t model;
 int main(void) {	
 
     // intialize model
+    model.frequency_encoder_mode = 0; // start in radio index mode
     model.volume = 0;
     model.radio_index = 0;
     model.frequency = brnoRadios[model.radio_index];
@@ -67,16 +69,17 @@ int main(void) {
     SI4703_SetVolume(model.volume);
     SI4703_SetFreq(frequencyFloat);
 
-    // encoder
+    // encoder - volume
     enc_settings_t volume_settings = {0, 15, &model.volume};
-    //enc_settings_t frequency_settings = {875, 1080, &model.frequency};
-    //enc_settings_t radion_index_settings = {0, sizeof(brnoRadios)/sizeof(brnoRadios[0]) - 1, &model.radio_index};
+    // encoder - frequency & radio index
+    enc_settings_t radio_index_settings = {0, sizeof(brnoRadios)/sizeof(brnoRadios[0]) - 1, &model.radio_index};
+    enc_settings_t frequency_settings = {875, 1080, &model.frequency};
 
     encoder_init(&volume_encoder, &PIND, PD4, PD3, &volume_settings);
-    //encoder_init(&frequency_encoder, &PIND, PD6, PD5, &radion_index_settings);
+    encoder_init(&frequency_encoder, &PIND, PD6, PD5, &radio_index_settings);
     
     // Last millis
-    uint32_t prevMillis_getRxRegs = millis();
+    uint32_t prevMillis_getRxRegs = 0;
 
     sei();
 
@@ -88,8 +91,13 @@ int main(void) {
 
     while(1) {
 
+        // change frequency encoder settings based on button state, debounce protected
+        uint8_t button_state = !gpio_read(&PIND, BUTTON_PIN);
+        encoder_change_frequency_settings(&model, &frequency_encoder, button_state, &radio_index_settings, &frequency_settings);
+
         // update encoders with data from ISR
         update_encoder(&volume_encoder);
+        update_encoder(&frequency_encoder);
 
         // TODO: update radio regs
 
@@ -105,12 +113,12 @@ int main(void) {
 
         #ifdef DEBUG_PRINT
         asm volatile("" ::: "memory");
-        if (*(volume_encoder.settings_p->position_p) != last_position/* || encoder_2.position != last_position_2*/) {
-            //sprintf(uart_msg, "Encoder position: \t1: %d \talias 1: %d \talias 2: %d \tsettings: %d \tmillis: %lu\n", *(encoder.settings_p->position_p), enc1_position, enc2_position, var_number, millis());
-            sprintf(uart_msg, "Encoder position: \t1: %d \talias 1: %d \tmillis: %lu\n", *(volume_encoder.settings_p->position_p), model.volume, millis());
+        if (*(frequency_encoder.settings_p->position_p) != last_position/* || encoder_2.position != last_position_2*/) {
+            sprintf(uart_msg, "Encoder position: \t1: %d \talias 1: %d \talias 2: %d \tsettings: %d \tbutton_state: %d \tmillis: %lu\n", *(frequency_encoder.settings_p->position_p), model.radio_index, model.frequency, model.frequency_encoder_mode, button_state, millis());
+            //sprintf(uart_msg, "Encoder position: \t1: %d \talias 1: %d \tmillis: %lu\n", *(volume_encoder.settings_p->position_p), model.volume, millis());
             //sprintf(uart_msg, "Encoder position: \t1: %d \t2: %d \talias: %d\n", encoder.position, encoder_2.position, *enc_allias_p);
             uart_puts(uart_msg);
-            last_position = *(volume_encoder.settings_p->position_p);
+            last_position = *(frequency_encoder.settings_p->position_p);
             //last_position_2 = encoder_2.position;
         }
         #endif
@@ -121,5 +129,5 @@ int main(void) {
 ISR(PCINT2_vect) {
 
     update_encoder_isr(&volume_encoder);
-    //update_encoder_isr(&frequency_encoder);
-    }
+    update_encoder_isr(&frequency_encoder);
+}
