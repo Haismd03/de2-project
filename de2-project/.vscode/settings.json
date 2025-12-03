@@ -6,6 +6,7 @@
         "io.h": "c",
         "delay.h": "c",
         "timer.h": "c",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "interrupts.h": "c"
     }
 }
