@@ -9,4 +9,6 @@ float int_to_float(uint16_t integerValue);
 
 void radio_update(project_model_t *model);
 
+extern uint16_t brnoRadios[41];
+
 #endif // __RADIO_H__

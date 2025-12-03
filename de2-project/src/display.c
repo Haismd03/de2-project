@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Draw static text: title, frequency, volume, time
 void display_update(project_model_t *model)
 {
 
@@ -13,12 +12,14 @@ void display_update(project_model_t *model)
     static uint16_t previousFrequency = 0;
     static uint16_t previousVolume = 0;
     static uint16_t previousRSSI = 0;
+    static uint16_t previousMode = 0;
 
     // check if anything changed
     if (strcmp(model->station_name, previousName) == 0 &&
     model->frequency == previousFrequency &&
     model->volume == previousVolume &&
-    abs(model->RSSI - previousRSSI) < 3) {
+    abs(model->RSSI - previousRSSI) < 3 &&
+    model->frequency_encoder_mode == previousMode) {
         
         return; // No changes, skip redraw
     }
@@ -28,6 +29,7 @@ void display_update(project_model_t *model)
     previousFrequency = model->frequency;
     previousVolume = model->volume;
     previousRSSI = model->RSSI; 
+    previousMode = model->frequency_encoder_mode;
 
     oled_clrscr();
 
@@ -58,14 +60,28 @@ void display_update(project_model_t *model)
 
     // RSSI
     char rssiStr[10];
-    snprintf(
-        rssiStr,
-        sizeof(rssiStr),
-        "RSSI: %u",
-        model->RSSI
-    );
+    snprintf(rssiStr, sizeof(rssiStr), "RSSI: %u", model->RSSI);
     oled_gotoxy(0, 5);
     oled_puts(rssiStr);
+
+    // Frequency encoder current mode
+    char msg[10];
+    char encMode[10];
+    snprintf(msg, sizeof(msg), "Changing: ");
+    oled_gotoxy(0, 6);
+    if(model->frequency_encoder_mode == 0)
+    {
+        snprintf(encMode, sizeof(encMode), "station");
+    }
+    oled_puts(msg);
+
+    oled_gotoxy(10, 6);
+    if(model->frequency_encoder_mode == 1)
+    {
+        snprintf(encMode, sizeof(encMode), "frequency");
+    }
+    oled_puts(encMode);
+
 
     oled_display();
 }
