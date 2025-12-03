@@ -11,6 +11,7 @@
 This projet deals with controling the radio module SI4703 using Arduino UNO microcontroller and C programming language. It's goal is to sweep through the radio stations typically receivable in Brno, determine those which radio is really able to receive, and provide them to the user. Two rotary encoders are used, one for radio tuning and one for the volume control. To inform the user about the currently tuned station and frequency, these data is displayed on the small OLED display.
 
 ## Scheme with complete wiring of the device
+<img width="982" height="743" alt="image" src="https://github.com/user-attachments/assets/9915069b-c59f-4ee9-aef9-f67ccab1944f" />
 
 ## Usage manual
 
@@ -24,6 +25,12 @@ This projet deals with controling the radio module SI4703 using Arduino UNO micr
   SI4703 is a radio module used for receiving FM radio broadcast. I uses 3.3V logic and I2C to communicate with the controller. To activate the receiver, some device, that can be used as antenna (for example headphones), must be plugged in to the connector. This device is also used for reproducing the decoded received radio signal. 
 
   ### SSD1306
+  SSD1306 is an oled display used to view volume and frequency set by user as well as name of radio channel and RSSI(Received Signal Strength Indicator) given by SI4703(FM radio modul). It uses I2C comunication, used liberaries oled and twi are from DE2 courses.      
+  <img width="462" height="424" alt="image" src="https://github.com/user-attachments/assets/2a181d5e-2865-45e9-8024-23a666c99a78" />  
+  -Display logic diagram
+
+
+
 
   ### Rotary encoder
 
