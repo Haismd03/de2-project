@@ -5,7 +5,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <timer.h>
 #include <avr/interrupt.h>
 // custom libraries
 #include "SI4703.h"

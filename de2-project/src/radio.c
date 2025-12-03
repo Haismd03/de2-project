@@ -12,29 +12,20 @@ void radio_read_regs(project_model_t *model) {
     uint16_t RSSI_raw;
     uint16_t RDSA, RDSB, RDSC, RDSD;
     if (SI4703_GetRxRegs(&RSSI_raw, &RDSA, &RDSB, &RDSC, &RDSD)) {
-        //char rssi_uart[10];
 
         model->RSSI = RSSI_raw & 0xFF; 
-        //itoa(model->SI4703.RSSI, rssi_uart, 10);
-        //uart_puts("RSSI: ");
-        //uart_print(rssi_uart);
-        //uart_print("\n");
 
         if (SI4703_DecodeRDS_PSName(&model->RSSI, &RDSB, &RDSD)) {
             char* currentName = SI4703_GetPSName();
 
-            // TODO: check length
-            strcpy(model->station_name, currentName);
+            static char prevName[9];
 
-            //draw_static_screen(currentName, &g_currentTuner);
-            
-            /*static char previousName[9] = ""; 
-            if (strcmp(currentName, previousName) != 0) {
-                //uart_print("PS Name: ");
-                //uart_print(currentName);
-                //uart_print("\n");
-                strcpy(previousName, currentName);
-            }*/
+            // Deletes the name when station is changed
+            if (strcmp(currentName, prevName) != 0) {
+                strcpy(model->station_name, currentName);
+            }
+
+            strcpy(prevName, currentName);
         }
     }
 }
@@ -60,7 +51,7 @@ void radio_update(project_model_t *model)
         previousFrequency = model->frequency;
         frequencyFloat = int_to_float(model->frequency);
         SI4703_SetFreq(frequencyFloat);     // change frequency
-        
+        strcpy(model->station_name, "        ");
     }
 
     // check if station changed
@@ -70,6 +61,7 @@ void radio_update(project_model_t *model)
         model->frequency = brnoRadios[model->radio_index];
         frequencyFloat = int_to_float(model->frequency);
         SI4703_SetFreq(frequencyFloat);     // change station
+        strcpy(model->station_name, "        ");
     }
 
     //check if volume changed
