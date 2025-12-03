@@ -28,7 +28,8 @@ This projet deals with controling the radio module SI4703 using Arduino UNO micr
   
   Display code logic:
   
-  <img width="446" height="416" alt="image" src="https://github.com/user-attachments/assets/9aa3a284-11a6-477f-af80-da9e6183b274" />
+  <img width="432" height="407" alt="image" src="https://github.com/user-attachments/assets/5aa00e57-46aa-4fbc-9121-8540e3192aac" />
+
 
 
   ### Rotary encoder
