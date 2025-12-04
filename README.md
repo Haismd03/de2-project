@@ -23,6 +23,8 @@ As mentioned before, this device uses two rotary encoders. The one used for freq
 ## Documentation
 [Documentation](https://haismd03.github.io/de2-project/html/index.html)
 
+<img width="500" alt="DE2 project" src="./assets/Poster_DE2.png"/>
+
 ## Demonstrative video
 [![Video title](https://img.youtube.com/vi/yhS_RZJiaSA/0.jpg)](https://www.youtube.com/watch?v=yhS_RZJiaSA)
 
