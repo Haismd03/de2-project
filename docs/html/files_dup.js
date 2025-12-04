@@ -1,4 +1,5 @@
 var files_dup =
 [
-    [ "de2-project", "dir_209e8adf1847b8b5880528a03ae2a0ec.html", "dir_209e8adf1847b8b5880528a03ae2a0ec" ]
+    [ "include", "dir_d44c64559bbebec7f509842c48db8b23.html", "dir_d44c64559bbebec7f509842c48db8b23" ],
+    [ "lib", "dir_97aefd0d527b934f1d99a682da8fe6a9.html", "dir_97aefd0d527b934f1d99a682da8fe6a9" ]
 ];

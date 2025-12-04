@@ -25,23 +25,6 @@
 var NAVTREE =
 [
   [ "DE2 project", "index.html", [
-    [ "FM radio receiver with digital tuning", "md__r_e_a_d_m_e.html", [
-      [ "Team members", "md__r_e_a_d_m_e.html#autotoc_md1", null ],
-      [ "Abstract", "md__r_e_a_d_m_e.html#autotoc_md2", null ],
-      [ "Connection of the project", "md__r_e_a_d_m_e.html#autotoc_md3", null ],
-      [ "Usage manual", "md__r_e_a_d_m_e.html#autotoc_md4", null ],
-      [ "Documentation", "md__r_e_a_d_m_e.html#autotoc_md5", null ],
-      [ "Demonstrative video", "md__r_e_a_d_m_e.html#autotoc_md6", null ],
-      [ "Main program diagram", "md__r_e_a_d_m_e.html#autotoc_md7", null ],
-      [ "Used hardware", "md__r_e_a_d_m_e.html#autotoc_md8", [
-        [ "Arduino UNO", "md__r_e_a_d_m_e.html#autotoc_md9", null ],
-        [ "SI4703", "md__r_e_a_d_m_e.html#autotoc_md10", null ],
-        [ "SSD1306", "md__r_e_a_d_m_e.html#autotoc_md11", null ],
-        [ "Rotary encoder", "md__r_e_a_d_m_e.html#autotoc_md12", null ]
-      ] ],
-      [ "Used third-party codes and libraries", "md__r_e_a_d_m_e.html#autotoc_md13", null ],
-      [ "License", "md__r_e_a_d_m_e.html#autotoc_md14", null ]
-    ] ],
     [ "Topics", "topics.html", "topics" ],
     [ "Data Structures", "annotated.html", [
       [ "Data Structures", "annotated.html", "annotated_dup" ],
