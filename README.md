@@ -21,7 +21,7 @@ This project deals with controlling the radio module SI4703 using the ATmega328 
 As mentioned before, this device uses two rotary encoders. The one used for frequency tuning has two modes, between which the user can switch by pushing the button on it. One mode allows the user to tune the frequency with a 100 kHz step, and the other one is used for going through the predefined station frequencies. The second rotary encoder is used for volume control.
 
 ## Documentation
-[Documentation](./docs/html)
+[Documentation](https://haismd03.github.io/de2-project/html/index.html)
 
 ## Demonstrative video
 [![Video title](https://img.youtube.com/vi/yhS_RZJiaSA/0.jpg)](https://www.youtube.com/watch?v=yhS_RZJiaSA)
