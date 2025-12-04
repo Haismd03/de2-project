@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025 Karel Matoušek
+ * MIT License
+ */
+
 #include "model.h"
 #include "SI4703.h"
 #include <stdlib.h>

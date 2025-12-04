@@ -27,6 +27,7 @@
 /**
  *  @file
  *  @defgroup pfleury_uart UART Library <uart.h>
+ *  @ingroup external_libraries
  *  @code #include <uart.h> @endcode
  *
  *  @brief Interrupt UART library using the built-in UART with transmit and receive circular buffers.

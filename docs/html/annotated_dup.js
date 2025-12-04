@@ -1,0 +1,25 @@
+var annotated_dup =
+[
+    [ "BOOTCONFIG_t", "union_b_o_o_t_c_o_n_f_i_g__t.html", null ],
+    [ "CHANNEL_t", "union_c_h_a_n_n_e_l__t.html", null ],
+    [ "CHIPID_t", "union_c_h_i_p_i_d__t.html", null ],
+    [ "DEVICEID_t", "union_d_e_v_i_c_e_i_d__t.html", null ],
+    [ "enc_settings_s", "structenc__settings__s.html", null ],
+    [ "encoder_s", "structencoder__s.html", null ],
+    [ "POWERCFG_t", "union_p_o_w_e_r_c_f_g__t.html", null ],
+    [ "project_model_s", "structproject__model__s.html", null ],
+    [ "RadioInfo", "struct_radio_info.html", null ],
+    [ "RDSA_t", "union_r_d_s_a__t.html", null ],
+    [ "RDSB_t", "union_r_d_s_b__t.html", null ],
+    [ "RDSC_t", "union_r_d_s_c__t.html", null ],
+    [ "RDSD_t", "union_r_d_s_d__t.html", null ],
+    [ "READCHAN_t", "union_r_e_a_d_c_h_a_n__t.html", null ],
+    [ "shadow_t", "unionshadow__t.html", null ],
+    [ "STATUSRSSI_t", "union_s_t_a_t_u_s_r_s_s_i__t.html", null ],
+    [ "SYSCONFIG1_t", "union_s_y_s_c_o_n_f_i_g1__t.html", null ],
+    [ "SYSCONFIG2_t", "union_s_y_s_c_o_n_f_i_g2__t.html", null ],
+    [ "SYSCONFIG3_t", "union_s_y_s_c_o_n_f_i_g3__t.html", null ],
+    [ "TEST1_t", "union_t_e_s_t1__t.html", null ],
+    [ "TEST2_t", "union_t_e_s_t2__t.html", null ],
+    [ "TunerInfo", "struct_tuner_info.html", null ]
+];

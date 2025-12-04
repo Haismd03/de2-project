@@ -12,6 +12,7 @@
 /**
  * @file 
  * @defgroup fryza_gpio GPIO Library <gpio.h>
+ * @ingroup external_libraries
  * @code #include <gpio.h> @endcode
  *
  * @brief GPIO library for AVR-GCC.

@@ -12,6 +12,7 @@
 /**
  * @file 
  * @defgroup fryza_twi TWI Library <twi.h>
+ * @ingroup external_libraries
  * @code #include <twi.h> @endcode
  *
  * @brief I2C/TWI library for AVR-GCC.

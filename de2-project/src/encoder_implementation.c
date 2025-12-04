@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025 David Haisman
+ * MIT License
+ */
+
 #include "encoder.h"
 #include "model.h"
 #include <stdint.h>
